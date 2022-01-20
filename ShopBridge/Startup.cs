@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using ShopBridge.Repositories;
+using ShopBridge.Repositories.Interfaces;
+using ShopBridge.Services;
+using ShopBridge.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +28,24 @@ namespace ShopBridge
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddRazorPages();
+
+            // Services
+            services.AddTransient<IItemService, ItemService>();
+
+            // Repository
+            services.AddTransient<IItemRepository, ItemRepository>();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ProductAdmin", policyBuilder =>
+                {
+                    policyBuilder.RequireAuthenticatedUser()
+                        .RequireAssertion(context =>
+                        {
+                            return context.User.IsInRole("Admin") == true;
+                        }).Build();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
