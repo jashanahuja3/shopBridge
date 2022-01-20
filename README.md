@@ -1,2 +1,2 @@
 # ShopBridge
-#shop bridge is an e-commerce website.
+#shop bridge is an e-commerce application.
